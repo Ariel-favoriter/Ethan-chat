@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Ethan Chat</title>
+    <style>
+        body { font-family: sans-serif; background: #f7f7f7; padding: 2em; text-align: center; }
+        #chat { max-width: 600px; margin: auto; background: #fff; padding: 1em; border-radius: 10px; }
+        #messages { height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 1em; text-align: left; margin-bottom: 1em; }
+        input, button { padding: 0.5em; font-size: 1em; }
+    </style>
+</head>
+<body>
+    <div id="chat">
+        <h2>🐻 Ethan 聊天室</h2>
+        <div id="messages"></div>
+        <input type="text" id="userInput" placeholder="和 Ethan 说点什么..." />
+        <button onclick="sendMessage()">发送</button>
+    </div>
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById("userInput");
+            const messages = document.getElementById("messages");
+            const userText = input.value;
+            if (!userText) return;
+            messages.innerHTML += "<div><strong>你：</strong> " + userText + "</div>";
+            input.value = "";
+
+            const response = await fetch("/api/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: userText })
+            });
+            const data = await response.json();
+            messages.innerHTML += "<div><strong>Ethan：</strong> " + data.reply + "</div>";
+            messages.scrollTop = messages.scrollHeight;
+        }
+    </script>
+</body>
+</html>
